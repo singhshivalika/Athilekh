@@ -116,7 +116,7 @@ public class myAccount {
 				f_passNo = rs.getString("passport_no");
 				f_countryName = rs.getString("country_name");
 				f_gender = rs.getString("gender");
-				f_address = rs.getString("address_buildingNo")+" "+rs.getString("address_streetName")+" "+rs.getString("address_city")+" "+rs.getString("address_state");
+				f_address = rs.getString("address_buildingNo")+" "+rs.getString("address_streetName")+",\n"+rs.getString("address_city")+", "+rs.getString("address_state");
 				f_dOB = rs.getString("dateOfBirth");
 				f_marrital = rs.getString("marital_status");
 				f_email = rs.getString("email");
@@ -126,10 +126,19 @@ public class myAccount {
 
 			}
 			
+			rs = DBConnect.getInstance().runFetchQuery("SELECT * FROM phoneno where Foreigner_ID='"+f_ID+"';  ");
+			f_phoneNo = "";
+			while(rs.next()) {
+				f_phoneNo += rs.getString("phoneNo")+"\n";
+				
+			}
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
+		
+		
 		
 		
 		//Inserting values
@@ -543,7 +552,7 @@ public class myAccount {
 		JPanel persnlDetailPanel = new JPanel();
 		persnlDetailPanel.setLayout(null);
 		persnlDetailPanel.setBackground(new Color(247, 247, 247));
-		persnlDetailPanel.setBounds(29, 213, 817, 245);
+		persnlDetailPanel.setBounds(29, 213, 817, 309);
 		mypersonPan.add(persnlDetailPanel);
 		LineBorder bord = new LineBorder(new Color(255, 255, 255), 5);
 		persnlDetailPanel.setBorder(bord);
@@ -554,11 +563,11 @@ public class myAccount {
 		l1ID.setBounds(46, 25, 33, 28);
 		persnlDetailPanel.add(l1ID);
 		
-		JLabel l1Phoneno = new JLabel("Phone No.");
-		l1Phoneno.setForeground(Color.GRAY);
-		l1Phoneno.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Phoneno.setBounds(425, 157, 188, 28);
-		persnlDetailPanel.add(l1Phoneno);
+		JLabel l1email = new JLabel("Email");
+		l1email.setForeground(Color.GRAY);
+		l1email.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l1email.setBounds(425, 191, 141, 28);
+		persnlDetailPanel.add(l1email);
 		
 		JLabel l1Gender = new JLabel("Gender");
 		l1Gender.setForeground(Color.GRAY);
@@ -572,16 +581,16 @@ public class myAccount {
 		l1DoB.setBounds(425, 25, 118, 28);
 		persnlDetailPanel.add(l1DoB);
 		
-		JLabel l1email = new JLabel("Email");
-		l1email.setForeground(Color.GRAY);
-		l1email.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1email.setBounds(425, 91, 118, 28);
-		persnlDetailPanel.add(l1email);
+		JLabel l1PhoneNo = new JLabel("Phone No");
+		l1PhoneNo.setForeground(Color.GRAY);
+		l1PhoneNo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l1PhoneNo.setBounds(425, 91, 118, 28);
+		persnlDetailPanel.add(l1PhoneNo);
 		
 		JLabel l1bloodG = new JLabel("Blood Group");
 		l1bloodG.setForeground(Color.GRAY);
 		l1bloodG.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1bloodG.setBounds(425, 124, 188, 28);
+		l1bloodG.setBounds(425, 158, 141, 28);
 		persnlDetailPanel.add(l1bloodG);
 		
 		JLabel l1religion = new JLabel("Religion");
@@ -591,35 +600,40 @@ public class myAccount {
 		persnlDetailPanel.add(l1religion);
 		
 		JLabel v1ID = new JLabel(f_ID);
+		v1ID.setHorizontalAlignment(SwingConstants.LEFT);
 		v1ID.setForeground(new Color(112, 181, 201));
 		v1ID.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		v1ID.setVerticalAlignment(SwingConstants.TOP);
+		v1ID.setBounds(187, 25, 196, 28);
 		
 		persnlDetailPanel.add(v1ID);
 		
-		JLabel v1Phoneno = new JLabel("Name:");
-		v1Phoneno.setForeground(new Color(112, 181, 201));
-		v1Phoneno.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		JTextArea v1email = new JTextArea(f_email);
+		v1email.setLineWrap(true);
+		v1email.setWrapStyleWord(true);
+		v1email.setForeground(new Color(112, 181, 201));
+		v1email.setBackground(new Color(247, 247, 247));
+		v1email.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		//v1Phoneno.set(187, 25, 189, 28);
-		v1Phoneno.setBounds(660, 157, 147, 28);
-		persnlDetailPanel.add(v1Phoneno);
+		v1email.setBounds(611, 191, 188, 62);
+		persnlDetailPanel.add(v1email);
 		
 		JLabel v1doB = new JLabel(f_dOB);
 		v1doB.setForeground(new Color(112, 181, 201));
 		v1doB.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		v1doB.setBounds(660, 25, 129, 28);
+		v1doB.setBounds(611, 25, 196, 28);
 		persnlDetailPanel.add(v1doB);
 		
-		JLabel v1email = new JLabel(f_email);
-		v1email.setForeground(new Color(112, 181, 201));
-		v1email.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		v1email.setBounds(660, 91, 129, 28);
-		persnlDetailPanel.add(v1email);
+		JTextArea v1PhoneNo = new JTextArea(f_phoneNo);
+		v1PhoneNo.setForeground(new Color(112, 181, 201));
+		v1PhoneNo.setBackground(new Color(247,247,247));
+		v1PhoneNo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		v1PhoneNo.setBounds(611, 91, 196, 61);
+		persnlDetailPanel.add(v1PhoneNo);
 		
 		JLabel v1bloodG = new JLabel(f_blood);
 		v1bloodG.setForeground(new Color(112, 181, 201));
 		v1bloodG.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		v1bloodG.setBounds(660, 124, 129, 28);
+		v1bloodG.setBounds(611, 158, 196, 28);
 		persnlDetailPanel.add(v1bloodG);
 		
 		JLabel v1religion = new JLabel(f_religion);
@@ -649,25 +663,25 @@ public class myAccount {
 		JLabel col1_5_2 = new JLabel(":");
 		col1_5_2.setForeground(new Color(0, 0, 0));
 		col1_5_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_5_2.setBounds(623, 25, 14, 28);
+		col1_5_2.setBounds(576, 25, 14, 28);
 		persnlDetailPanel.add(col1_5_2);
 		
 		JLabel col1_6_1 = new JLabel(":");
 		col1_6_1.setForeground(new Color(0, 0, 0));
 		col1_6_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_6_1.setBounds(623, 91, 14, 28);
+		col1_6_1.setBounds(576, 91, 14, 28);
 		persnlDetailPanel.add(col1_6_1);
 		
 		JLabel col1_7_1 = new JLabel(":");
 		col1_7_1.setForeground(new Color(0, 0, 0));
 		col1_7_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_7_1.setBounds(623, 124, 14, 28);
+		col1_7_1.setBounds(576, 158, 14, 28);
 		persnlDetailPanel.add(col1_7_1);
 		
 		JLabel col1_8_1 = new JLabel(":");
 		col1_8_1.setForeground(new Color(0, 0, 0));
 		col1_8_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_8_1.setBounds(623, 157, 14, 28);
+		col1_8_1.setBounds(576, 191, 14, 28);
 		persnlDetailPanel.add(col1_8_1);
 		
 		JLabel v1Gender = new JLabel(f_gender);
@@ -697,23 +711,20 @@ public class myAccount {
 		JLabel col1_5_1_1 = new JLabel(":");
 		col1_5_1_1.setForeground(new Color(0, 0, 0));
 		col1_5_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_5_1_1.setBounds(623, 58, 14, 28);
+		col1_5_1_1.setBounds(576, 58, 14, 28);
 		persnlDetailPanel.add(col1_5_1_1);
 		
 		JLabel v1marritalStatus = new JLabel(f_marrital);
 		v1marritalStatus.setForeground(new Color(112, 181, 201));
 		v1marritalStatus.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		v1marritalStatus.setBounds(660, 58, 129, 28);
+		v1marritalStatus.setBounds(611, 58, 196, 28);
 		persnlDetailPanel.add(v1marritalStatus);
 		
-		String add="K.G. 84, KAVI NAGAR, GHAZIABAD, UTTAR PRADESH 201001, INDIA";
 		
-		JTextArea v1address = new JTextArea(add);
+		JTextArea v1address = new JTextArea(f_address);
 		v1address.setWrapStyleWord(true);
 		v1address.setLineWrap(true);
 		v1address.setEditable(false);
-		//textArea.setVerticalAlignment(SwingConstants.TOP);
-		//textArea.setHorizontalAlignment(SwingConstants.LEFT);
 		v1address.setForeground(new Color(112, 181, 201));
 		v1address.setBackground(persnlDetailPanel.getBackground());
 		v1address.setFont(new Font("Tahoma", Font.PLAIN, 18));
