@@ -2,12 +2,14 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -23,9 +25,13 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.SystemColor;
 import java.awt.font.TextAttribute;
+import java.security.MessageDigest;
 import java.sql.ResultSet;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JTextField;
@@ -42,6 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import java.awt.Rectangle;
 import javax.swing.JComboBox;
+import javax.swing.JRadioButton;
 
 
 
@@ -50,24 +57,15 @@ public class myAccount {
 	private JFrame frame;
 	private String resize2;
 	private JLabel daysLabel;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextField textField_6;
-	private JTextField textField_7;
-	private JTextField textField_8;
-	private JTextField textField_9;
-	private JTextField textField_10;
-	private JTextField textField_11;
-	private JTextField textField_12;
-	private JTextField textField_13;
-	private JTextField textField_14;
-	private JTextField textField_15;
-	private JTextField textField_16;
-	private JTextField textField_17;
+	private JTextField v2gender;
+	private JTextField v2phone;
+	private JTextField v2blood;
+	private JTextField v2email;
+	private JTextField v2dOB;
+	private JTextField v2name;
+	private JTextField v2newPass;
+	private JTextField v2oldPass;
+	private JTextField v2ID;
 	private JTextField textField_18;
 	private JTextField textField_19;
 	private JTextField textField_20;
@@ -80,13 +78,20 @@ public class myAccount {
 	
 	
 	public static String f_name;
-	public static String f_ID, f_fullName, f_passNo, f_countryName, f_phoneNo, f_gender, f_address, f_dOB, f_marrital, f_email, f_blood, f_religion;
+	public static String f_ID, f_fullName, f_passNo, f_countryName, f_phoneNo, f_gender, f_address, f_dOB, f_marrital, f_email, f_blood, f_religionName;
+	private static String f_addBuildNo, f_addStreetNo, f_addCity, f_addState;
+	private JTextField v2streetName;
+	private JTextField v2cityName;
+	private JTextField v2stateName;
 	
 	/**
 	 * Launch the application.
 	 */
 	
+	static HashMap<String,String> religions = new HashMap<String,String>();
+	
 	public static void main(String[] args) {	
+		
 		
 		f_ID = args[0];
 		
@@ -117,11 +122,17 @@ public class myAccount {
 				f_countryName = rs.getString("country_name");
 				f_gender = rs.getString("gender");
 				f_address = rs.getString("address_buildingNo")+" "+rs.getString("address_streetName")+",\n"+rs.getString("address_city")+", "+rs.getString("address_state");
+				
+				f_addBuildNo = rs.getString("address_buildingNo");
+				f_addStreetNo = rs.getString("address_streetName");
+				f_addCity = rs.getString("address_city");
+				f_addState = rs.getString("address_state");
+				
 				f_dOB = rs.getString("dateOfBirth");
 				f_marrital = rs.getString("marital_status");
 				f_email = rs.getString("email");
 				f_blood =  rs.getString("bloodGroup");
-				f_religion = rs.getString("religionName");
+				f_religionName = rs.getString("religionName");
 				
 
 			}
@@ -133,10 +144,21 @@ public class myAccount {
 				
 			}
 			
+			rs = DBConnect.getInstance().runFetchQuery("SELECT * FROM religion");
+			
+			while(rs.next()) {
+				
+				religions.put(rs.getString("religionName"), rs.getString("religionID"));
+				
+			}
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
+		
+		
+		
 		
 		
 		
@@ -268,7 +290,7 @@ public class myAccount {
 		
 		JPanel leftsidePanel = new JPanel();
 		leftsidePanel.setBackground(new Color(0, 36, 71));
-		leftsidePanel.setBounds(0, 105, 274, 648);
+		leftsidePanel.setBounds(0, 102, 274, 648);
 		frame.getContentPane().add(leftsidePanel);
 		leftsidePanel.setLayout(null);
 		
@@ -636,7 +658,7 @@ public class myAccount {
 		v1bloodG.setBounds(611, 158, 196, 28);
 		persnlDetailPanel.add(v1bloodG);
 		
-		JLabel v1religion = new JLabel(f_religion);
+		JLabel v1religion = new JLabel(f_religionName);
 		v1religion.setForeground(new Color(112, 181, 201));
 		v1religion.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		v1religion.setBounds(187, 58, 189, 28);
@@ -751,7 +773,7 @@ public class myAccount {
 		
 		
 		JPanel panel = new JPanel();
-		panel.setBounds(new Rectangle(0, 5, 900, 800));
+		panel.setBounds(new Rectangle(0, 5, 400, 700));
 		panel.setLayout(null);
 		panel.setBackground(new Color(231,231,231));
 		panel.setPreferredSize(new Dimension(600, 800));
@@ -783,67 +805,55 @@ public class myAccount {
 		JPanel persnlDetailPanel_1 = new JPanel();
 		persnlDetailPanel_1.setLayout(null);
 		persnlDetailPanel_1.setBackground(new Color(247, 247, 247));
-		persnlDetailPanel_1.setBounds(30, 160, 900, 249);
+		persnlDetailPanel_1.setBounds(30, 160, 820, 322);
 		panel.add(persnlDetailPanel_1);
 		
-		JLabel l1ID_2 = new JLabel("ID");
-		l1ID_2.setForeground(Color.GRAY);
-		l1ID_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1ID_2.setBounds(32, 24, 33, 28);
-		persnlDetailPanel_1.add(l1ID_2);
+		JLabel l2Phoneno = new JLabel("Phone No.");
+		l2Phoneno.setForeground(Color.GRAY);
+		l2Phoneno.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2Phoneno.setBounds(425, 195, 93, 28);
+		persnlDetailPanel_1.add(l2Phoneno);
 		
-		JLabel l1Phoneno_2 = new JLabel("Phone No.");
-		l1Phoneno_2.setForeground(Color.GRAY);
-		l1Phoneno_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Phoneno_2.setBounds(32, 91, 93, 28);
-		persnlDetailPanel_1.add(l1Phoneno_2);
+		JLabel l2Gender = new JLabel("Gender");
+		l2Gender.setForeground(Color.GRAY);
+		l2Gender.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2Gender.setBounds(32, 195, 70, 28);
+		persnlDetailPanel_1.add(l2Gender);
 		
-		JLabel l1Gender_2 = new JLabel("Gender");
-		l1Gender_2.setForeground(Color.GRAY);
-		l1Gender_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Gender_2.setBounds(32, 124, 70, 28);
-		persnlDetailPanel_1.add(l1Gender_2);
+		JLabel l2DoB = new JLabel("Date of Birth");
+		l2DoB.setForeground(Color.GRAY);
+		l2DoB.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2DoB.setBounds(425, 25, 118, 28);
+		persnlDetailPanel_1.add(l2DoB);
 		
-		JLabel l1DoB_2 = new JLabel("Date of Birth");
-		l1DoB_2.setForeground(Color.GRAY);
-		l1DoB_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1DoB_2.setBounds(425, 25, 118, 28);
-		persnlDetailPanel_1.add(l1DoB_2);
+		JLabel l2email = new JLabel("Email");
+		l2email.setForeground(Color.GRAY);
+		l2email.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2email.setBounds(425, 91, 118, 28);
+		persnlDetailPanel_1.add(l2email);
 		
-		JLabel l1email_2 = new JLabel("Email");
-		l1email_2.setForeground(Color.GRAY);
-		l1email_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1email_2.setBounds(425, 91, 118, 28);
-		persnlDetailPanel_1.add(l1email_2);
+		JLabel l2bloodG = new JLabel("Blood Group");
+		l2bloodG.setForeground(Color.GRAY);
+		l2bloodG.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2bloodG.setBounds(425, 124, 145, 28);
+		persnlDetailPanel_1.add(l2bloodG);
 		
-		JLabel l1bloodG_2 = new JLabel("Blood Group");
-		l1bloodG_2.setForeground(Color.GRAY);
-		l1bloodG_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1bloodG_2.setBounds(425, 124, 188, 28);
-		persnlDetailPanel_1.add(l1bloodG_2);
-		
-		JLabel l1religion_2 = new JLabel("Religion");
-		l1religion_2.setForeground(Color.GRAY);
-		l1religion_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1religion_2.setBounds(425, 157, 188, 28);
-		persnlDetailPanel_1.add(l1religion_2);
-		
-		JLabel col1_1_1_1 = new JLabel(":");
-		col1_1_1_1.setForeground(Color.BLACK);
-		col1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_1_1_1.setBounds(152, 25, 14, 28);
-		persnlDetailPanel_1.add(col1_1_1_1);
+		JLabel l2religion = new JLabel("Religion");
+		l2religion.setForeground(Color.GRAY);
+		l2religion.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2religion.setBounds(425, 157, 138, 28);
+		persnlDetailPanel_1.add(l2religion);
 		
 		JLabel col1_2_1_1 = new JLabel(":");
 		col1_2_1_1.setForeground(Color.BLACK);
 		col1_2_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_2_1_1.setBounds(152, 92, 14, 28);
+		col1_2_1_1.setBounds(577, 195, 14, 28);
 		persnlDetailPanel_1.add(col1_2_1_1);
 		
 		JLabel col1_3_1_1 = new JLabel(":");
 		col1_3_1_1.setForeground(Color.BLACK);
 		col1_3_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_3_1_1.setBounds(152, 125, 14, 28);
+		col1_3_1_1.setBounds(152, 196, 14, 28);
 		persnlDetailPanel_1.add(col1_3_1_1);
 		
 		JLabel col1_5_2_1 = new JLabel(":");
@@ -870,23 +880,23 @@ public class myAccount {
 		col1_8_1_1.setBounds(577, 157, 14, 28);
 		persnlDetailPanel_1.add(col1_8_1_1);
 		
-		JLabel l1Address_2 = new JLabel("Address");
-		l1Address_2.setForeground(Color.GRAY);
-		l1Address_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Address_2.setBounds(32, 158, 86, 28);
-		persnlDetailPanel_1.add(l1Address_2);
+		JLabel l2add_buildNo = new JLabel("Address");
+		l2add_buildNo.setForeground(Color.GRAY);
+		l2add_buildNo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2add_buildNo.setBounds(32, 58, 86, 28);
+		persnlDetailPanel_1.add(l2add_buildNo);
 		
 		JLabel col1_4_1_1_1 = new JLabel(":");
 		col1_4_1_1_1.setForeground(Color.BLACK);
 		col1_4_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_4_1_1_1.setBounds(152, 158, 14, 28);
+		col1_4_1_1_1.setBounds(152, 58, 14, 28);
 		persnlDetailPanel_1.add(col1_4_1_1_1);
 		
-		JLabel l1marritalStatus_2 = new JLabel("Marrital Status");
-		l1marritalStatus_2.setForeground(Color.GRAY);
-		l1marritalStatus_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1marritalStatus_2.setBounds(425, 58, 145, 28);
-		persnlDetailPanel_1.add(l1marritalStatus_2);
+		JLabel l2marrital = new JLabel("Marrital Status");
+		l2marrital.setForeground(Color.GRAY);
+		l2marrital.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2marrital.setBounds(425, 58, 145, 28);
+		persnlDetailPanel_1.add(l2marrital);
 		
 		JLabel col1_5_1_1_1 = new JLabel(":");
 		col1_5_1_1_1.setForeground(Color.BLACK);
@@ -894,139 +904,158 @@ public class myAccount {
 		col1_5_1_1_1.setBounds(577, 58, 14, 28);
 		persnlDetailPanel_1.add(col1_5_1_1_1);
 		
-		JTextArea textArea_1_1 = new JTextArea();
-		textArea_1_1.setBorder(new LineBorder(new Color(192, 192, 192)));
-		textArea_1_1.setBounds(187, 158, 189, 28);
-		persnlDetailPanel_1.add(textArea_1_1);
+		JTextField v2address = new JTextField(f_addBuildNo);
+		v2address.setToolTipText("Building No.");
+		//v2address.set
+		v2address.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2address.setBorder(new LineBorder(new Color(192, 192, 192)));
+		v2address.setBounds(187, 58, 189, 28);
+		persnlDetailPanel_1.add(v2address);
 		
-		textField = new JTextField();
-		textField.setEnabled(false);
-		textField.setEditable(false);
-		textField.setColumns(10);
-		textField.setBackground(Color.WHITE);
-		textField.setBounds(187, 125, 189, 28);
-		persnlDetailPanel_1.add(textField);
+		v2gender = new JTextField(f_gender);
+		v2gender.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2gender.setEnabled(false);
+		v2gender.setEditable(false);
+		v2gender.setColumns(10);
+		v2gender.setBackground(Color.WHITE);
+		v2gender.setBounds(187, 196, 189, 28);
+		persnlDetailPanel_1.add(v2gender);
 		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(187, 91, 189, 28);
-		persnlDetailPanel_1.add(textField_1);
+		JTextArea v2phone = new JTextArea(f_phoneNo);
+		v2phone.setWrapStyleWord(true);
+		v2phone.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2phone.setColumns(10);
+		v2phone.setBounds(597, 195, 189, 59);
+		v2phone.setBorder(new LineBorder(new Color(192, 192, 192)));
+		persnlDetailPanel_1.add(v2phone);
 		
-		textField_2 = new JTextField();
-		textField_2.setColumns(10);
-		textField_2.setBounds(597, 158, 189, 28);
-		persnlDetailPanel_1.add(textField_2);
+		v2blood = new JTextField(f_blood);
+		v2blood.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2blood.setEnabled(false);
+		v2blood.setEditable(false);
+		v2blood.setColumns(10);
+		v2blood.setBackground(Color.WHITE);
+		v2blood.setBounds(597, 124, 189, 28);
+		persnlDetailPanel_1.add(v2blood);
 		
-		textField_3 = new JTextField();
-		textField_3.setEnabled(false);
-		textField_3.setEditable(false);
-		textField_3.setColumns(10);
-		textField_3.setBackground(Color.WHITE);
-		textField_3.setBounds(597, 124, 189, 28);
-		persnlDetailPanel_1.add(textField_3);
+		v2email = new JTextField(f_email);
+		v2email.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2email.setColumns(10);
+		v2email.setBounds(597, 90, 189, 28);
+		persnlDetailPanel_1.add(v2email);
 		
-		textField_4 = new JTextField();
-		textField_4.setColumns(10);
-		textField_4.setBounds(597, 90, 189, 28);
-		persnlDetailPanel_1.add(textField_4);
-		
-		textField_5 = new JTextField();
-		textField_5.setEnabled(false);
-		textField_5.setEditable(false);
-		textField_5.setColumns(10);
-		textField_5.setBackground(Color.WHITE);
-		textField_5.setBounds(597, 24, 189, 28);
-		persnlDetailPanel_1.add(textField_5);
-		
-		textField_6 = new JTextField();
-		textField_6.setEnabled(false);
-		textField_6.setEditable(false);
-		textField_6.setColumns(10);
-		textField_6.setBackground(Color.WHITE);
-		textField_6.setBounds(187, 24, 189, 28);
-		persnlDetailPanel_1.add(textField_6);
-		
-		textField_7 = new JTextField();
-		textField_7.setColumns(10);
-		textField_7.setBounds(597, 57, 189, 28);
-		persnlDetailPanel_1.add(textField_7);
+		v2dOB = new JTextField(f_dOB);
+		v2dOB.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2dOB.setEnabled(false);
+		v2dOB.setEditable(false);
+		v2dOB.setColumns(10);
+		v2dOB.setBackground(Color.WHITE);
+		v2dOB.setBounds(597, 24, 189, 28);
+		persnlDetailPanel_1.add(v2dOB);
 		
 		JLabel l2name = new JLabel("Name");
 		l2name.setForeground(Color.GRAY);
 		l2name.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l2name.setBounds(32, 56, 93, 28);
+		l2name.setBounds(32, 25, 93, 28);
 		persnlDetailPanel_1.add(l2name);
 		
 		JLabel col1_2_1_1_1 = new JLabel(":");
 		col1_2_1_1_1.setForeground(Color.BLACK);
 		col1_2_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_2_1_1_1.setBounds(152, 57, 14, 28);
+		col1_2_1_1_1.setBounds(152, 26, 14, 28);
 		persnlDetailPanel_1.add(col1_2_1_1_1);
 		
-		textField_8 = new JTextField();
-		textField_8.setEnabled(false);
-		textField_8.setEditable(false);
-		textField_8.setColumns(10);
-		textField_8.setBackground(Color.WHITE);
-		textField_8.setBounds(187, 56, 189, 28);
-		persnlDetailPanel_1.add(textField_8);
+		v2name = new JTextField(f_fullName);
+		v2name.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2name.setEnabled(false);
+		v2name.setEditable(false);
+		v2name.setColumns(10);
+		v2name.setBackground(Color.WHITE);
+		v2name.setBounds(187, 25, 189, 28);
+		persnlDetailPanel_1.add(v2name);
 		
-		JLabel l2pernlDet_1 = new JLabel("Account Details");
-		l2pernlDet_1.setHorizontalTextPosition(SwingConstants.CENTER);
-		l2pernlDet_1.setHorizontalAlignment(SwingConstants.LEFT);
-		l2pernlDet_1.setForeground(new Color(25, 25, 112));
-		l2pernlDet_1.setFont(new Font("Corbel", Font.PLAIN, 30));
-		l2pernlDet_1.setAlignmentY(0.0f);
-		l2pernlDet_1.setBounds(30, 427, 859, 42);
-		panel.add(l2pernlDet_1);
+		v2streetName = new JTextField(f_addStreetNo);
+		v2streetName.setToolTipText("Street");
+		v2streetName.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2streetName.setBorder(new LineBorder(new Color(192, 192, 192)));
+		v2streetName.setBounds(187, 92, 189, 28);
+		persnlDetailPanel_1.add(v2streetName);
+		
+		v2cityName = new JTextField(f_addCity);
+		v2cityName.setToolTipText("City");
+		v2cityName.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2cityName.setBorder(new LineBorder(new Color(192, 192, 192)));
+		v2cityName.setBounds(187, 126, 189, 28);
+		persnlDetailPanel_1.add(v2cityName);
+		
+		v2stateName = new JTextField(f_addState);
+		v2stateName.setToolTipText("State");
+		v2stateName.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2stateName.setBorder(new LineBorder(new Color(192, 192, 192)));
+		v2stateName.setBounds(187, 160, 189, 28);
+		persnlDetailPanel_1.add(v2stateName);
+		
+		JRadioButton v2married = new JRadioButton("Married");
+		v2married.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2married.setBounds(597, 52, 101, 37);
+		v2married.setBackground(new Color(247,247,247));
+		persnlDetailPanel_1.add(v2married);
+		
+		JRadioButton v2unmarried = new JRadioButton("Unmarried");
+		v2unmarried.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		v2unmarried.setBounds(704, 52, 101, 37);
+		v2unmarried.setBackground(new Color(247,247,247));
+		persnlDetailPanel_1.add(v2unmarried);
+		
+		if(f_marrital.equals("married"))
+			v2married.setSelected(true);		
+		else
+			v2unmarried.setSelected(true);
+		
+		ButtonGroup g1 = new ButtonGroup();
+		g1.add(v2married);
+		g1.add(v2unmarried);
+		
+		
+		JComboBox v2religions = new JComboBox(religions.keySet().toArray());
+		v2religions.setBounds(597, 158, 189, 28);
+		v2religions.setSelectedItem(f_religionName);
+		persnlDetailPanel_1.add(v2religions);
+		
+		
+		
+		JLabel l2loginDet = new JLabel("Login Details");
+		l2loginDet.setHorizontalTextPosition(SwingConstants.CENTER);
+		l2loginDet.setHorizontalAlignment(SwingConstants.LEFT);
+		l2loginDet.setForeground(new Color(25, 25, 112));
+		l2loginDet.setFont(new Font("Corbel", Font.PLAIN, 30));
+		l2loginDet.setAlignmentY(0.0f);
+		l2loginDet.setBounds(30, 522, 224, 42);
+		panel.add(l2loginDet);
 		
 		JPanel persnlDetailPanel_1_1 = new JPanel();
 		persnlDetailPanel_1_1.setLayout(null);
 		persnlDetailPanel_1_1.setBackground(new Color(247, 247, 247));
-		persnlDetailPanel_1_1.setBounds(30, 503, 817, 249);
+		persnlDetailPanel_1_1.setBounds(30, 574, 830, 140);
 		panel.add(persnlDetailPanel_1_1);
 		
-		JLabel l1ID_2_1 = new JLabel("ID");
-		l1ID_2_1.setForeground(Color.GRAY);
-		l1ID_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1ID_2_1.setBounds(32, 24, 33, 28);
-		persnlDetailPanel_1_1.add(l1ID_2_1);
+		JLabel l2ID = new JLabel("ID");
+		l2ID.setForeground(Color.GRAY);
+		l2ID.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2ID.setBounds(32, 24, 33, 28);
+		persnlDetailPanel_1_1.add(l2ID);
 		
-		JLabel l1Phoneno_2_1 = new JLabel("Phone No.");
-		l1Phoneno_2_1.setForeground(Color.GRAY);
-		l1Phoneno_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Phoneno_2_1.setBounds(32, 91, 93, 28);
-		persnlDetailPanel_1_1.add(l1Phoneno_2_1);
+		JLabel l2oldPass = new JLabel("Old Password");
+		l2oldPass.setForeground(Color.GRAY);
+		l2oldPass.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2oldPass.setBounds(34, 55, 118, 28);
+		persnlDetailPanel_1_1.add(l2oldPass);
 		
-		JLabel l1Gender_2_1 = new JLabel("Gender");
-		l1Gender_2_1.setForeground(Color.GRAY);
-		l1Gender_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Gender_2_1.setBounds(32, 124, 70, 28);
-		persnlDetailPanel_1_1.add(l1Gender_2_1);
-		
-		JLabel l1DoB_2_1 = new JLabel("Date of Birth");
-		l1DoB_2_1.setForeground(Color.GRAY);
-		l1DoB_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1DoB_2_1.setBounds(425, 25, 118, 28);
-		persnlDetailPanel_1_1.add(l1DoB_2_1);
-		
-		JLabel l1email_2_1 = new JLabel("Email");
-		l1email_2_1.setForeground(Color.GRAY);
-		l1email_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1email_2_1.setBounds(425, 91, 118, 28);
-		persnlDetailPanel_1_1.add(l1email_2_1);
-		
-		JLabel l1bloodG_2_1 = new JLabel("Blood Group");
-		l1bloodG_2_1.setForeground(Color.GRAY);
-		l1bloodG_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1bloodG_2_1.setBounds(425, 124, 188, 28);
-		persnlDetailPanel_1_1.add(l1bloodG_2_1);
-		
-		JLabel l1religion_2_1 = new JLabel("Religion");
-		l1religion_2_1.setForeground(Color.GRAY);
-		l1religion_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1religion_2_1.setBounds(425, 157, 188, 28);
-		persnlDetailPanel_1_1.add(l1religion_2_1);
+		JLabel l1newPass = new JLabel("New Password");
+		l1newPass.setForeground(Color.GRAY);
+		l1newPass.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l1newPass.setBounds(419, 24, 118, 28);
+		persnlDetailPanel_1_1.add(l1newPass);
 		
 		JLabel col1_1_1_1_1 = new JLabel(":");
 		col1_1_1_1_1.setForeground(Color.BLACK);
@@ -1037,139 +1066,59 @@ public class myAccount {
 		JLabel col1_2_1_1_2 = new JLabel(":");
 		col1_2_1_1_2.setForeground(Color.BLACK);
 		col1_2_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_2_1_1_2.setBounds(152, 92, 14, 28);
+		col1_2_1_1_2.setBounds(152, 55, 14, 28);
 		persnlDetailPanel_1_1.add(col1_2_1_1_2);
 		
 		JLabel col1_3_1_1_1 = new JLabel(":");
 		col1_3_1_1_1.setForeground(Color.BLACK);
 		col1_3_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_3_1_1_1.setBounds(152, 125, 14, 28);
+		col1_3_1_1_1.setBounds(571, 27, 14, 28);
 		persnlDetailPanel_1_1.add(col1_3_1_1_1);
 		
-		JLabel col1_5_2_1_1 = new JLabel(":");
-		col1_5_2_1_1.setForeground(Color.BLACK);
-		col1_5_2_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_5_2_1_1.setBounds(577, 25, 14, 28);
-		persnlDetailPanel_1_1.add(col1_5_2_1_1);
-		
-		JLabel col1_6_1_1_1 = new JLabel(":");
-		col1_6_1_1_1.setForeground(Color.BLACK);
-		col1_6_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_6_1_1_1.setBounds(577, 91, 14, 28);
-		persnlDetailPanel_1_1.add(col1_6_1_1_1);
-		
-		JLabel col1_7_1_1_1 = new JLabel(":");
-		col1_7_1_1_1.setForeground(Color.BLACK);
-		col1_7_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_7_1_1_1.setBounds(577, 124, 14, 28);
-		persnlDetailPanel_1_1.add(col1_7_1_1_1);
-		
-		JLabel col1_8_1_1_1 = new JLabel(":");
-		col1_8_1_1_1.setForeground(Color.BLACK);
-		col1_8_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_8_1_1_1.setBounds(577, 157, 14, 28);
-		persnlDetailPanel_1_1.add(col1_8_1_1_1);
-		
-		JLabel l1Address_2_1 = new JLabel("Address");
-		l1Address_2_1.setForeground(Color.GRAY);
-		l1Address_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Address_2_1.setBounds(32, 158, 86, 28);
-		persnlDetailPanel_1_1.add(l1Address_2_1);
+		JLabel l2confirmPass = new JLabel("Confirm Password");
+		l2confirmPass.setForeground(Color.GRAY);
+		l2confirmPass.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l2confirmPass.setBounds(419, 59, 144, 28);
+		persnlDetailPanel_1_1.add(l2confirmPass);
 		
 		JLabel col1_4_1_1_1_1 = new JLabel(":");
 		col1_4_1_1_1_1.setForeground(Color.BLACK);
 		col1_4_1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_4_1_1_1_1.setBounds(152, 158, 14, 28);
+		col1_4_1_1_1_1.setBounds(571, 59, 14, 28);
 		persnlDetailPanel_1_1.add(col1_4_1_1_1_1);
 		
-		JLabel l1marritalStatus_2_1 = new JLabel("Marrital Status");
-		l1marritalStatus_2_1.setForeground(Color.GRAY);
-		l1marritalStatus_2_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1marritalStatus_2_1.setBounds(425, 58, 145, 28);
-		persnlDetailPanel_1_1.add(l1marritalStatus_2_1);
+		JPasswordField v2conPass = new JPasswordField();
+		v2conPass.setBorder(new LineBorder(new Color(192, 192, 192)));
+		v2conPass.setBounds(606, 65, 189, 28);
+		persnlDetailPanel_1_1.add(v2conPass);
 		
-		JLabel col1_5_1_1_1_1 = new JLabel(":");
-		col1_5_1_1_1_1.setForeground(Color.BLACK);
-		col1_5_1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_5_1_1_1_1.setBounds(577, 58, 14, 28);
-		persnlDetailPanel_1_1.add(col1_5_1_1_1_1);
+		v2newPass = new JPasswordField();
+		v2newPass.setColumns(10);
+		v2newPass.setBackground(Color.WHITE);
+		v2newPass.setBounds(606, 27, 189, 28);
+		persnlDetailPanel_1_1.add(v2newPass);
 		
-		JTextArea textArea_1_1_1 = new JTextArea();
-		textArea_1_1_1.setBorder(new LineBorder(new Color(192, 192, 192)));
-		textArea_1_1_1.setBounds(187, 158, 189, 28);
-		persnlDetailPanel_1_1.add(textArea_1_1_1);
+		v2oldPass = new JPasswordField();
+		v2oldPass.setColumns(10);
+		v2oldPass.setBounds(187, 59, 189, 28);
+		persnlDetailPanel_1_1.add(v2oldPass);
 		
-		textField_9 = new JTextField();
-		textField_9.setEnabled(false);
-		textField_9.setEditable(false);
-		textField_9.setColumns(10);
-		textField_9.setBackground(Color.WHITE);
-		textField_9.setBounds(187, 125, 189, 28);
-		persnlDetailPanel_1_1.add(textField_9);
+		//if(v2oldPass.equals())
 		
-		textField_10 = new JTextField();
-		textField_10.setColumns(10);
-		textField_10.setBounds(187, 91, 189, 28);
-		persnlDetailPanel_1_1.add(textField_10);
+		v2ID = new JTextField(f_ID);
+		v2ID.setEnabled(false);
+		v2ID.setEditable(false);
+		v2ID.setColumns(10);
+		v2ID.setBackground(Color.WHITE);
+		v2ID.setBounds(187, 24, 189, 28);
+		persnlDetailPanel_1_1.add(v2ID);
 		
-		textField_11 = new JTextField();
-		textField_11.setColumns(10);
-		textField_11.setBounds(597, 158, 189, 28);
-		persnlDetailPanel_1_1.add(textField_11);
-		
-		textField_12 = new JTextField();
-		textField_12.setEnabled(false);
-		textField_12.setEditable(false);
-		textField_12.setColumns(10);
-		textField_12.setBackground(Color.WHITE);
-		textField_12.setBounds(597, 124, 189, 28);
-		persnlDetailPanel_1_1.add(textField_12);
-		
-		textField_13 = new JTextField();
-		textField_13.setColumns(10);
-		textField_13.setBounds(597, 90, 189, 28);
-		persnlDetailPanel_1_1.add(textField_13);
-		
-		textField_14 = new JTextField();
-		textField_14.setEnabled(false);
-		textField_14.setEditable(false);
-		textField_14.setColumns(10);
-		textField_14.setBackground(Color.WHITE);
-		textField_14.setBounds(597, 24, 189, 28);
-		persnlDetailPanel_1_1.add(textField_14);
-		
-		textField_15 = new JTextField();
-		textField_15.setEnabled(false);
-		textField_15.setEditable(false);
-		textField_15.setColumns(10);
-		textField_15.setBackground(Color.WHITE);
-		textField_15.setBounds(187, 24, 189, 28);
-		persnlDetailPanel_1_1.add(textField_15);
-		
-		textField_16 = new JTextField();
-		textField_16.setColumns(10);
-		textField_16.setBounds(597, 57, 189, 28);
-		persnlDetailPanel_1_1.add(textField_16);
-		
-		JLabel l2name_1 = new JLabel("Name");
-		l2name_1.setForeground(Color.GRAY);
-		l2name_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l2name_1.setBounds(32, 56, 93, 28);
-		persnlDetailPanel_1_1.add(l2name_1);
-		
-		JLabel col1_2_1_1_1_1 = new JLabel(":");
-		col1_2_1_1_1_1.setForeground(Color.BLACK);
-		col1_2_1_1_1_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_2_1_1_1_1.setBounds(152, 57, 14, 28);
-		persnlDetailPanel_1_1.add(col1_2_1_1_1_1);
-		
-		textField_17 = new JTextField();
-		textField_17.setEnabled(false);
-		textField_17.setEditable(false);
-		textField_17.setColumns(10);
-		textField_17.setBackground(Color.WHITE);
-		textField_17.setBounds(187, 56, 189, 28);
-		persnlDetailPanel_1_1.add(textField_17);
+		JButton b2save = new JButton("SAVE");
+		b2save.setForeground(Color.LIGHT_GRAY);
+		b2save.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 15));
+		b2save.setBounds(670, 680, 150, 34);
+		b2save.setBackground(new Color(0, 36, 71));
+		panel.add(b2save);
 		
 		JPanel travelPan = new JPanel();
 		trypanel.add(travelPan, "name_497750311800400");
@@ -1487,6 +1436,21 @@ public class myAccount {
 	    jl.setIcon(i);
 	    jp.add(jl);
 	    
+	}
+	
+	private String getHash(String s) {
+		
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			byte by[] = md.digest(s.getBytes());
+			String t = Base64.getEncoder().encodeToString(by);
+			return t;
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 	
 	
