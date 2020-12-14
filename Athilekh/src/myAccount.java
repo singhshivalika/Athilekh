@@ -17,6 +17,7 @@ import java.awt.Dimension;
 
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Font;
 import java.awt.Image;
@@ -35,6 +36,7 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.swing.JTextField;
 import java.awt.event.MouseAdapter;
@@ -51,6 +53,9 @@ import javax.swing.ScrollPaneConstants;
 import java.awt.Rectangle;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
+import javax.swing.JTable;
 
 
 
@@ -68,15 +73,32 @@ public class myAccount {
 	private JPasswordField v2newPass;
 	private JPasswordField v2oldPass;
 	private JTextField v2ID;
-	private JTextField textField_18;
-	private JTextField textField_19;
-	private JTextField textField_20;
-	private JTextField textField_21;
-	private JTextField textField_22;
-	private JTextField textField_24;
-	private JTextField v3duratn;
-	private JTextField textField_26;
+	private JTextField v3transCom;
 	private JPasswordField v2conPass;
+	private JTextField v2address;
+	private JRadioButton v2married;
+	private JRadioButton v2unmarried;
+	private JPanel trypanel;
+	private JTextField v3bookingNo;
+	private JComboBox v3date;
+	private JComboBox v3month;
+	private JComboBox v3year;
+	private JLabel vTicket;
+	private JLabel vCom;
+	private JLabel vVisa;
+	private JLabel vdtArvl;
+	private JLabel vdtDept;
+	private JLabel vDuratn;
+	private JLabel days;
+	private JLabel applyforVisit;
+	private JLabel accountDashboard;
+	private JLabel myPersonal;
+	private JLabel editDetails;
+	private JLabel travelog;
+	
+	
+	
+	
 	
 	
 	public static String f_name;
@@ -86,6 +108,9 @@ public class myAccount {
 	private JTextField v2cityName;
 	private JTextField v2stateName;
 	
+	
+	private static String dBoard_Ticket=null, dBoard_visa=null, dBoard_dArr=null, dBoard_dDep=null, dBoard_duration=null, dBoard_left=null, dBoard_cmpny=null;
+	
 	String message;
 	
 	/**
@@ -93,12 +118,37 @@ public class myAccount {
 	 */
 	
 	static HashMap<String,String> religions = new HashMap<String,String>();
+	static HashMap<String,String> visas = new HashMap<String,String>();
+	static String[] dates, months, years; 
+	static private int sY = 2018,eY = 2030; 
+	private JTable table;
+	
+	
+	String[] tblHead={"Date","VISA","Company","Booking No"};
+	DefaultTableModel dtm=new DefaultTableModel(tblHead,0);
+	
 	
 	public static void main(String[] args) {	
 		
 		//     ID     ->   PASSWORD
 		// "20201212" -> "ims_project"
 		// "20201101" -> "normalization"
+		
+		
+		dates= new String[31];  
+		for(int i = 1; i<= 31; i++)
+			dates[i-1] = String.valueOf(i);
+		
+		
+		months= new String[31];  
+		for(int i = 1; i<= 12; i++)
+			months[i-1] = String.valueOf(i);
+		
+
+		years = new String[17];  
+		for(int i = sY; i<= eY; i++)
+			years[i-sY] = String.valueOf(i);
+		
 		
 		f_ID = args[0];
 		
@@ -156,6 +206,28 @@ public class myAccount {
 			while(rs.next()) {
 				
 				religions.put(rs.getString("religionName"), rs.getString("religionID"));
+				
+			}
+			
+			
+			rs = DBConnect.getInstance().runFetchQuery("SELECT * FROM visa");
+			
+			while(rs.next()) {
+				
+				visas.put(rs.getString("visa_name"), rs.getString("visa_ID"));
+				
+			}
+			
+			rs = DBConnect.getInstance().runFetchQuery("select * from dashboardview1 where Foreigner_ID = '"+f_ID+"';");
+			while(rs.next()) {
+					
+				dBoard_dArr = rs.getString("dt_tm_arvl").split(" ")[0];
+				dBoard_dDep = rs.getString("departDate").split(" ")[0];
+				dBoard_Ticket = rs.getString("booking_no");
+				dBoard_visa = rs.getString("visa_name");
+				dBoard_duration=rs.getString("duration");
+				dBoard_left=rs.getString("difference");
+				dBoard_cmpny=rs.getString("company");
 				
 			}
 			
@@ -222,6 +294,25 @@ public class myAccount {
 	 */
 	public myAccount() {
 		initialize();
+		
+
+	
+		
+		vTicket.setText(dBoard_Ticket);
+		vdtArvl.setText(dBoard_dArr);
+		vdtDept.setText(dBoard_dDep);
+		vCom.setText(dBoard_cmpny);
+		vDuratn.setText(dBoard_duration);
+		vVisa.setText(dBoard_visa);
+		days.setText(dBoard_left);
+		
+		Font font = accountDashboard.getFont();
+		Map attributes = font.getAttributes();
+		attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
+		
+		accountDashboard.setFont(font.deriveFont(attributes));
+		
+		
 	}
 
 	/**
@@ -269,16 +360,6 @@ public class myAccount {
 		logout_button.setBounds(1069, 67, 85, 21);
 		frame.getContentPane().add(logout_button);
 		
-		JLabel changePassword = new JLabel("change password");
-		changePassword.setFont(new Font("Segoe UI Historic", Font.PLAIN, 12));
-		changePassword.setHorizontalAlignment(SwingConstants.CENTER);
-		changePassword.setBounds(1059, 43, 106, 21);
-		frame.getContentPane().add(changePassword);
-		
-		Font font = changePassword.getFont();
-		Map attributes = font.getAttributes();
-		attributes.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
-		changePassword.setFont(font.deriveFont(attributes));
 		
 		JLabel welcome = new JLabel("Welcome, ");
 		welcome.setFont(new Font("Microsoft JhengHei", Font.BOLD, 15));
@@ -299,10 +380,10 @@ public class myAccount {
 		frame.getContentPane().add(leftsidePanel);
 		leftsidePanel.setLayout(null);
 		
-		JLabel myPersonal = new JLabel("My Personal Details");
+		myPersonal = new JLabel("My Personal Details");
 		
 		
-		JLabel accountDashboard = new JLabel("Account Dashbard");
+	    accountDashboard = new JLabel("Account Dashbard");
 		accountDashboard.setForeground(new Color(204, 204, 204));
 		
 		
@@ -316,7 +397,7 @@ public class myAccount {
 		myPersonal.setBounds(0, 285, 274, 27);
 		leftsidePanel.add(myPersonal);
 		
-		JLabel editDetails = new JLabel("Edit Details");
+		editDetails = new JLabel("Edit Details");
 		
 		editDetails.setForeground(new Color(204, 204, 204));
 		editDetails.setHorizontalAlignment(SwingConstants.CENTER);
@@ -324,14 +405,23 @@ public class myAccount {
 		editDetails.setBounds(0, 324, 274, 27);
 		leftsidePanel.add(editDetails);
 		
-		JLabel travelog = new JLabel("My Travelog");
+		
+		
+		travelog = new JLabel("My Travelog");
 		travelog.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				unboldAll();
 				Font font = travelog.getFont();
 				Map attributes = font.getAttributes();
 				attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
 				travelog.setFont(font.deriveFont(attributes));
+
+				CardLayout cl = (CardLayout)trypanel.getLayout();
+				
+				cl.show(trypanel, "name_497750311800400");
+				populate();
+				
 			}
 		});
 		travelog.setForeground(new Color(204, 204, 204));
@@ -340,14 +430,19 @@ public class myAccount {
 		travelog.setBounds(0, 363, 274, 27);
 		leftsidePanel.add(travelog);
 		
-		JLabel applyforVisit = new JLabel("Apply for Visit");
+		applyforVisit = new JLabel("Apply for Visit");
 		applyforVisit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				unboldAll();
 				Font font = applyforVisit.getFont();
 				Map attributes = font.getAttributes();
 				attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
 				applyforVisit.setFont(font.deriveFont(attributes));
+				
+				CardLayout cl = (CardLayout)trypanel.getLayout();
+				
+				cl.show(trypanel, "name_497754296084800");
 			}
 		});
 		applyforVisit.setForeground(new Color(204, 204, 204));
@@ -356,7 +451,7 @@ public class myAccount {
 		applyforVisit.setBounds(0, 402, 274, 27);
 		leftsidePanel.add(applyforVisit);
 		
-		JPanel trypanel = new JPanel();
+		trypanel = new JPanel();
 		trypanel.setBounds(275, 101, 900, 652);
 		frame.getContentPane().add(trypanel);
 		trypanel.setLayout(new CardLayout(0, 0));
@@ -375,7 +470,7 @@ public class myAccount {
 		heading.setHorizontalTextPosition(SwingConstants.CENTER);
 		heading.setAlignmentY(0.0f);
 		
-		JLabel days = new JLabel("10");
+		days = new JLabel("10");
 		days.setBounds(326, 148, 159, 128);
 		accdashPan.add(days);
 		days.setHorizontalAlignment(SwingConstants.CENTER);
@@ -464,13 +559,13 @@ public class myAccount {
 		accEntryPan.add(vPassno);
 		vPassno.setForeground(new Color(112, 181, 201));
 		
-		JLabel vdtArvl = new JLabel("10-11-2020");
+		vdtArvl = new JLabel("10-11-2020");
 		vdtArvl.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		vdtArvl.setBounds(660, 25, 130, 28);
 		accEntryPan.add(vdtArvl);
 		vdtArvl.setForeground(new Color(112, 181, 201));
 		
-		JLabel vDuratn = new JLabel(" 1 year");
+		vDuratn = new JLabel(" 1 year");
 		vDuratn.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		vDuratn.setBounds(660, 91, 130, 28);
 		accEntryPan.add(vDuratn);
@@ -520,19 +615,19 @@ public class myAccount {
 		JLabel labVisa = new JLabel("VISA");
 		labVisa.setForeground(Color.GRAY);
 		labVisa.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		labVisa.setBounds(45, 124, 110, 28);
+		labVisa.setBounds(45, 159, 110, 28);
 		accEntryPan.add(labVisa);
 		
 		JLabel col1_4_1 = new JLabel(":");
 		col1_4_1.setForeground(new Color(0, 0, 0));
 		col1_4_1.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_4_1.setBounds(165, 124, 14, 28);
+		col1_4_1.setBounds(165, 159, 14, 28);
 		accEntryPan.add(col1_4_1);
 		
-		JLabel vVisa = new JLabel("STUDENT");
+		vVisa = new JLabel("STUDENT");
 		vVisa.setForeground(new Color(112, 181, 201));
 		vVisa.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		vVisa.setBounds(202, 124, 213, 28);
+		vVisa.setBounds(202, 159, 213, 28);
 		accEntryPan.add(vVisa);
 		
 		JLabel labDttmdeprt = new JLabel("Date of Departure");
@@ -547,7 +642,7 @@ public class myAccount {
 		col1_5_1.setBounds(623, 58, 14, 28);
 		accEntryPan.add(col1_5_1);
 		
-		JLabel vdtDept = new JLabel("NULL");
+		vdtDept = new JLabel("NULL");
 		vdtDept.setForeground(new Color(112, 181, 201));
 		vdtDept.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		vdtDept.setBounds(660, 58, 130, 28);
@@ -565,11 +660,29 @@ public class myAccount {
 		col1_7_2.setBounds(166, 91, 14, 28);
 		accEntryPan.add(col1_7_2);
 		
-		JLabel vTicket = new JLabel("XYZ9279382A08");
+		vTicket = new JLabel("XYZ9279382A08");
 		vTicket.setForeground(new Color(112, 181, 201));
 		vTicket.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		vTicket.setBounds(200, 91, 215, 28);
 		accEntryPan.add(vTicket);
+		
+		JLabel lblCompany = new JLabel("Company");
+		lblCompany.setForeground(Color.GRAY);
+		lblCompany.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		lblCompany.setBounds(45, 124, 110, 28);
+		accEntryPan.add(lblCompany);
+		
+		JLabel col1_4_1_2 = new JLabel(":");
+		col1_4_1_2.setForeground(Color.BLACK);
+		col1_4_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		col1_4_1_2.setBounds(165, 124, 14, 28);
+		accEntryPan.add(col1_4_1_2);
+		
+		vCom = new JLabel("company");
+		vCom.setForeground(new Color(112, 181, 201));
+		vCom.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		vCom.setBounds(202, 124, 213, 28);
+		accEntryPan.add(vCom);
 		
 		JPanel mypersonPan = new JPanel();
 		trypanel.add(mypersonPan, "name_497101350644300");
@@ -909,7 +1022,7 @@ public class myAccount {
 		col1_5_1_1_1.setBounds(577, 58, 14, 28);
 		persnlDetailPan.add(col1_5_1_1_1);
 		
-		JTextField v2address = new JTextField(f_addBuildNo);
+		v2address = new JTextField(f_addBuildNo);
 		v2address.setDisabledTextColor(Color.BLACK);
 		v2address.setToolTipText("Building No.");
 		//v2address.set
@@ -1007,13 +1120,13 @@ public class myAccount {
 		v2stateName.setBounds(187, 160, 189, 28);
 		persnlDetailPan.add(v2stateName);
 		
-		JRadioButton v2married = new JRadioButton("Married");
+		v2married = new JRadioButton("Married");
 		v2married.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		v2married.setBounds(597, 52, 101, 37);
 		v2married.setBackground(new Color(247,247,247));
 		persnlDetailPan.add(v2married);
 		
-		JRadioButton v2unmarried = new JRadioButton("Unmarried");
+		v2unmarried = new JRadioButton("Unmarried");
 		v2unmarried.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		v2unmarried.setBounds(704, 52, 101, 37);
 		v2unmarried.setBackground(new Color(247,247,247));
@@ -1033,7 +1146,6 @@ public class myAccount {
 		v2religions.setBounds(597, 158, 189, 28);
 		v2religions.setSelectedItem(f_religionName);
 		persnlDetailPan.add(v2religions);
-		
 		
 		
 		JLabel l2loginDet = new JLabel("Login Details");
@@ -1063,10 +1175,12 @@ public class myAccount {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				
+				System.out.println("UPDATE foreigner set address_buildingNo='"+v2address.getText()+"', address_streetName='"+v2streetName.getText()+"', address_city='"+v2cityName.getText()+"', address_state='"+v2stateName.getText()+"', marital_status="+(v2married.isSelected()?"married":"unmarried")+" where foreigner_ID ='"+f_ID+"' ;");
 				verify();
 			}
 		});
 				
+		
 				//-1 =  "You have entered a blank password!";
 				//-2 =  "Your Old Password did not match!";
 				//-3 = "New password cannot be same as the previous password!";
@@ -1074,11 +1188,9 @@ public class myAccount {
 				
 				
 				
-				
 				//int result = verify(v2oldPass.getText(), v2newPass.getText(), Arrays.toString(v2conPass.getPassword()));
 				
 				
-		
 		
 		
 		b2save.setForeground(Color.LIGHT_GRAY);
@@ -1169,10 +1281,20 @@ public class myAccount {
 		travelPan.setBackground(new Color(231,231,231));
 		
 		JPanel panel_1 = new JPanel();
-		panel_1.setBounds(53, 100, 783, 111);
+		panel_1.setBounds(53, 100, 783, 452);
+		panel_1.setLayout(null);
 		travelPan.add(panel_1);
 		
-		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(43, 38, 700, 375);
+		panel_1.add(scrollPane_1);
+	
+		table = new JTable(dtm);
+		table.setRowHeight(30);
+		table.setFont(new Font("Serif", Font.BOLD, 20));
+		scrollPane_1.setViewportView(table);
+		populate();
+				
 		JPanel applyPan = new JPanel();
 		trypanel.add(applyPan, "name_497754296084800");
 		applyPan.setLayout(null);
@@ -1186,228 +1308,167 @@ public class myAccount {
 		l1applyPan.setBounds(0, 45, 901, 42);
 		applyPan.add(l1applyPan);
 		
-		JPanel persnlDetailPanel_1_2 = new JPanel();
-		persnlDetailPanel_1_2.setLayout(null);
-		persnlDetailPanel_1_2.setBackground(new Color(247, 247, 247));
-		persnlDetailPanel_1_2.setBounds(29, 213, 817, 245);
-		applyPan.add(persnlDetailPanel_1_2);
+		JPanel DetailPanel = new JPanel();
+		DetailPanel.setLayout(null);
+		DetailPanel.setBackground(new Color(247, 247, 247));
+		DetailPanel.setBounds(29, 213, 817, 245);
+		applyPan.add(DetailPanel);
 		
 		JLabel l1ID_2_2 = new JLabel("VISA");
 		l1ID_2_2.setForeground(Color.GRAY);
 		l1ID_2_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1ID_2_2.setBounds(36, 34, 57, 28);
-		persnlDetailPanel_1_2.add(l1ID_2_2);
+		l1ID_2_2.setBounds(36, 49, 57, 28);
+		DetailPanel.add(l1ID_2_2);
 		
-		JLabel l3bookingNo = new JLabel("Booking No.");
-		l3bookingNo.setForeground(Color.GRAY);
-		l3bookingNo.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l3bookingNo.setBounds(36, 101, 110, 28);
-		persnlDetailPanel_1_2.add(l3bookingNo);
-		
-		JLabel l1Gender_2_2 = new JLabel("Gender");
-		l1Gender_2_2.setForeground(Color.GRAY);
-		l1Gender_2_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Gender_2_2.setBounds(36, 134, 70, 28);
-		persnlDetailPanel_1_2.add(l1Gender_2_2);
+		JLabel l3transCom = new JLabel("Transport Company");
+		l3transCom.setForeground(Color.GRAY);
+		l3transCom.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l3transCom.setBounds(36, 134, 170, 28);
+		DetailPanel.add(l3transCom);
 		
 		JLabel l3DoArr = new JLabel("Date of Arrival");
 		l3DoArr.setForeground(Color.GRAY);
 		l3DoArr.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		l3DoArr.setBounds(425, 50, 118, 28);
-		persnlDetailPanel_1_2.add(l3DoArr);
-		
-		JLabel l1email_2_2 = new JLabel("Email");
-		l1email_2_2.setForeground(Color.GRAY);
-		l1email_2_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1email_2_2.setBounds(425, 116, 118, 28);
-		persnlDetailPanel_1_2.add(l1email_2_2);
-		
-		JLabel l1bloodG_2_2 = new JLabel("Blood Group");
-		l1bloodG_2_2.setForeground(Color.GRAY);
-		l1bloodG_2_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1bloodG_2_2.setBounds(425, 149, 145, 28);
-		persnlDetailPanel_1_2.add(l1bloodG_2_2);
-		
-		JLabel l1religion_2_2 = new JLabel("Religion");
-		l1religion_2_2.setForeground(Color.GRAY);
-		l1religion_2_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1religion_2_2.setBounds(425, 182, 145, 28);
-		persnlDetailPanel_1_2.add(l1religion_2_2);
+		DetailPanel.add(l3DoArr);
 		
 		JLabel col1_1_1_1_2 = new JLabel(":");
 		col1_1_1_1_2.setForeground(Color.BLACK);
 		col1_1_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_1_1_1_2.setBounds(156, 35, 14, 28);
-		persnlDetailPanel_1_2.add(col1_1_1_1_2);
-		
-		JLabel col1_2_1_1_3 = new JLabel(":");
-		col1_2_1_1_3.setForeground(Color.BLACK);
-		col1_2_1_1_3.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_2_1_1_3.setBounds(156, 102, 14, 28);
-		persnlDetailPanel_1_2.add(col1_2_1_1_3);
+		col1_1_1_1_2.setBounds(156, 50, 14, 28);
+		DetailPanel.add(col1_1_1_1_2);
 		
 		JLabel col1_3_1_1_2 = new JLabel(":");
 		col1_3_1_1_2.setForeground(Color.BLACK);
 		col1_3_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_3_1_1_2.setBounds(156, 135, 14, 28);
-		persnlDetailPanel_1_2.add(col1_3_1_1_2);
+		col1_3_1_1_2.setBounds(216, 134, 14, 28);
+		DetailPanel.add(col1_3_1_1_2);
 		
 		JLabel col1_5_2_1_2 = new JLabel(":");
 		col1_5_2_1_2.setForeground(Color.BLACK);
 		col1_5_2_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		col1_5_2_1_2.setBounds(577, 50, 14, 28);
-		persnlDetailPanel_1_2.add(col1_5_2_1_2);
+		DetailPanel.add(col1_5_2_1_2);
 		
-		JLabel col1_6_1_1_2 = new JLabel(":");
-		col1_6_1_1_2.setForeground(Color.BLACK);
-		col1_6_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_6_1_1_2.setBounds(577, 116, 14, 28);
-		persnlDetailPanel_1_2.add(col1_6_1_1_2);
-		
-		JLabel col1_7_1_1_2 = new JLabel(":");
-		col1_7_1_1_2.setForeground(Color.BLACK);
-		col1_7_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_7_1_1_2.setBounds(577, 149, 14, 28);
-		persnlDetailPanel_1_2.add(col1_7_1_1_2);
-		
-		JLabel col1_8_1_1_2 = new JLabel(":");
-		col1_8_1_1_2.setForeground(Color.BLACK);
-		col1_8_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_8_1_1_2.setBounds(577, 182, 14, 28);
-		persnlDetailPanel_1_2.add(col1_8_1_1_2);
-		
-		JLabel l1Address_2_2 = new JLabel("Address");
-		l1Address_2_2.setForeground(Color.GRAY);
-		l1Address_2_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l1Address_2_2.setBounds(36, 168, 86, 28);
-		persnlDetailPanel_1_2.add(l1Address_2_2);
+		JLabel l3bookNo = new JLabel("Booking No.");
+		l3bookNo.setForeground(Color.GRAY);
+		l3bookNo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+		l3bookNo.setBounds(36, 168, 110, 28);
+		DetailPanel.add(l3bookNo);
 		
 		JLabel col1_4_1_1_1_2 = new JLabel(":");
 		col1_4_1_1_1_2.setForeground(Color.BLACK);
 		col1_4_1_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_4_1_1_1_2.setBounds(156, 168, 14, 28);
-		persnlDetailPanel_1_2.add(col1_4_1_1_1_2);
+		col1_4_1_1_1_2.setBounds(216, 168, 14, 28);
+		DetailPanel.add(col1_4_1_1_1_2);
 		
-		JLabel l3duratn = new JLabel("Duration");
-		l3duratn.setForeground(Color.GRAY);
-		l3duratn.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l3duratn.setBounds(425, 83, 145, 28);
-		persnlDetailPanel_1_2.add(l3duratn);
+		v3bookingNo = new JTextField();
+		v3bookingNo.setBorder(new LineBorder(new Color(192, 192, 192)));
+		v3bookingNo.setBounds(251, 168, 264, 28);
+		DetailPanel.add(v3bookingNo);
 		
-		JLabel col1_5_1_1_1_2 = new JLabel(":");
-		col1_5_1_1_1_2.setForeground(Color.BLACK);
-		col1_5_1_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_5_1_1_1_2.setBounds(577, 83, 14, 28);
-		persnlDetailPanel_1_2.add(col1_5_1_1_1_2);
+		v3transCom = new JTextField();
+		v3transCom.setColumns(10);
+		v3transCom.setBackground(Color.WHITE);
+		v3transCom.setBounds(251, 134, 264, 28);
+		DetailPanel.add(v3transCom);
 		
-		JTextArea textArea_1_1_2 = new JTextArea();
-		textArea_1_1_2.setBorder(new LineBorder(new Color(192, 192, 192)));
-		textArea_1_1_2.setBounds(191, 168, 189, 28);
-		persnlDetailPanel_1_2.add(textArea_1_1_2);
+		v3date = new JComboBox(dates);
+		v3date.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(!validDate(
+						Integer.parseInt(v3date.getSelectedItem().toString()),
+						Integer.parseInt(v3month.getSelectedItem().toString()),
+						Integer.parseInt(v3year.getSelectedItem().toString()))) {
+					
+					JOptionPane.showMessageDialog(new JFrame(),"Invalid date","Invalid Date",JOptionPane.WARNING_MESSAGE);
+					v3date.setSelectedItem("1");
+				}
+			}
+		});
+		v3date.setBounds(597, 46, 50, 28);
+		DetailPanel.add(v3date);
 		
-		textField_18 = new JTextField();
-		textField_18.setEnabled(false);
-		textField_18.setEditable(false);
-		textField_18.setColumns(10);
-		textField_18.setBackground(Color.WHITE);
-		textField_18.setBounds(191, 135, 189, 28);
-		persnlDetailPanel_1_2.add(textField_18);
+		v3month = new JComboBox(months);
+		v3date.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(!validDate(
+						Integer.parseInt(v3date.getSelectedItem().toString()),
+						Integer.parseInt(v3month.getSelectedItem().toString()),
+						Integer.parseInt(v3year.getSelectedItem().toString()))) {
+					
+					JOptionPane.showMessageDialog(new JFrame(),"Invalid month","Invalid Month",JOptionPane.WARNING_MESSAGE);
+					v3month.setSelectedItem("1");
+				}
+				
+			}
+		});
+		v3month.setBounds(654, 46, 50, 28);
+		DetailPanel.add(v3month);
 		
-		//////////////////////
-		
-		 
-	     
-		///////////////////////
-		
-		
-		
-		textField_19 = new JTextField();
-		textField_19.setColumns(10);
-		textField_19.setBounds(191, 101, 189, 28);
-		persnlDetailPanel_1_2.add(textField_19);
-		
-		textField_20 = new JTextField();
-		textField_20.setColumns(10);
-		textField_20.setBounds(597, 183, 189, 28);
-		persnlDetailPanel_1_2.add(textField_20);
-		
-		textField_21 = new JTextField();
-		textField_21.setEnabled(false);
-		textField_21.setEditable(false);
-		textField_21.setColumns(10);
-		textField_21.setBackground(Color.WHITE);
-		textField_21.setBounds(597, 149, 189, 28);
-		persnlDetailPanel_1_2.add(textField_21);
-		
-		textField_22 = new JTextField();
-		textField_22.setColumns(10);
-		textField_22.setBounds(597, 115, 189, 28);
-		persnlDetailPanel_1_2.add(textField_22);
-		
-		textField_24 = new JTextField();
-		textField_24.setEnabled(false);
-		textField_24.setEditable(false);
-		textField_24.setColumns(10);
-		textField_24.setBackground(Color.WHITE);
-		textField_24.setBounds(191, 34, 189, 28);
-		persnlDetailPanel_1_2.add(textField_24);
-		
-		v3duratn = new JTextField();
-		v3duratn.setColumns(10);
-		v3duratn.setBounds(597, 82, 189, 28);
-		persnlDetailPanel_1_2.add(v3duratn);
-		
-		JLabel l3passNo = new JLabel("Passport No.");
-		l3passNo.setForeground(Color.GRAY);
-		l3passNo.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		l3passNo.setBounds(36, 66, 110, 28);
-		persnlDetailPanel_1_2.add(l3passNo);
-		
-		JLabel col1_2_1_1_1_2 = new JLabel(":");
-		col1_2_1_1_1_2.setForeground(Color.BLACK);
-		col1_2_1_1_1_2.setFont(new Font("Tahoma", Font.PLAIN, 18));
-		col1_2_1_1_1_2.setBounds(156, 67, 14, 28);
-		persnlDetailPanel_1_2.add(col1_2_1_1_1_2);
-		
-		textField_26 = new JTextField();
-		textField_26.setEnabled(false);
-		textField_26.setEditable(false);
-		textField_26.setColumns(10);
-		textField_26.setBackground(Color.WHITE);
-		textField_26.setBounds(191, 66, 189, 28);
-		persnlDetailPanel_1_2.add(textField_26);
-		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(597, 46, 50, 28);
-		persnlDetailPanel_1_2.add(comboBox);
-		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(654, 46, 50, 28);
-		persnlDetailPanel_1_2.add(comboBox_1);
-		
-		JComboBox comboBox_2 = new JComboBox();
-		comboBox_2.setBounds(710, 46, 75, 28);
-		persnlDetailPanel_1_2.add(comboBox_2);
+		v3year = new JComboBox(years);
+		v3date.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if(!validDate(
+						Integer.parseInt(v3date.getSelectedItem().toString()),
+						Integer.parseInt(v3month.getSelectedItem().toString()),
+						Integer.parseInt(v3year.getSelectedItem().toString()))) {
+					
+					JOptionPane.showMessageDialog(new JFrame(),"Invalid year","Invalid Year",JOptionPane.WARNING_MESSAGE);
+					v3date.setSelectedItem(sY);
+				}
+				
+			}
+		});
+		v3year.setBounds(710, 46, 75, 28);
+		DetailPanel.add(v3year);
 		
 		JLabel l3dd = new JLabel("DD");
 		l3dd.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		l3dd.setBounds(611, 10, 27, 44);
-		persnlDetailPanel_1_2.add(l3dd);
+		DetailPanel.add(l3dd);
 		
 		JLabel l3mm = new JLabel("MM");
 		l3mm.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		l3mm.setBounds(666, 10, 27, 44);
-		persnlDetailPanel_1_2.add(l3mm);
+		DetailPanel.add(l3mm);
 		
 		JLabel l3yy = new JLabel("YY");
 		l3yy.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		l3yy.setBounds(735, 10, 27, 44);
-		persnlDetailPanel_1_2.add(l3yy);
+		DetailPanel.add(l3yy);
+		
+		JComboBox visacombo = new JComboBox(visas.keySet().toArray());
+		
+		visacombo.setBounds(191, 49, 184, 28);
+		
+		DetailPanel.add(visacombo);
+		
+		JButton b3apply = new JButton("APPLY");
+		b3apply.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+			    UUID uuid = UUID.randomUUID();
+			    
+				DBConnect.getInstance().runInsertQuery("INSERT INTO visitor (foreigner_ID,visa_ID,visitor_ID,dt_tm_arvl) values('"+f_ID+"','"+visas.get(visacombo.getSelectedItem())+"','"+uuid.toString()+"','"+v3year.getSelectedItem()+"-"+v3month.getSelectedItem()+"-"+v3date.getSelectedItem()+"');");
+				DBConnect.getInstance().runInsertQuery("INSERT INTO Arr_transportatn values('"+uuid.toString()+"','"+v3bookingNo.getText()+"','"+v3transCom.getText()+"');");
+				
+				JOptionPane.showMessageDialog(new JFrame(),"Submitted successfully ","Confirmation",JOptionPane.PLAIN_MESSAGE);
+				
+			}
+		});
+		b3apply.setForeground(Color.LIGHT_GRAY);
+		b3apply.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 15));
+		b3apply.setBounds(652, 508, 167, 42);
+		b3apply.setBackground(new Color(0, 36, 71));
+		applyPan.add(b3apply);
 		
 		
 		accountDashboard.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				unboldAll();
 				Font font = accountDashboard.getFont();
 				Map attributes = font.getAttributes();
 				attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
@@ -1422,6 +1483,7 @@ public class myAccount {
 		myPersonal.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				unboldAll();
 				Font font = myPersonal.getFont();
 				Map attributes = font.getAttributes();
 				attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
@@ -1434,9 +1496,12 @@ public class myAccount {
 			}
 		});
 		
+		
+		
 		editDetails.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				unboldAll();
 				Font font = editDetails.getFont();
 				Map attributes = font.getAttributes();
 				attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
@@ -1449,6 +1514,7 @@ public class myAccount {
 			}
 		});
 
+		
 		
 		
 		/**JPanel daysLeft = new JPanel();
@@ -1468,6 +1534,26 @@ public class myAccount {
 		*/
 		
 	
+	}
+	
+	private void populate() {
+		try {
+			
+			dtm.setRowCount(0);
+			
+			ResultSet rs = DBConnect.getInstance().runFetchQuery("SELECT * from visitor left join Arr_transportatn using (visitor_ID) left join visa using(visa_ID) where foreigner_ID = '"+f_ID+"' order by dt_tm_arvl desc;");
+			
+			while(rs.next()) {
+		
+					String[] t = new String[]{rs.getString("dt_tm_arvl").split(" ")[0],rs.getString("visa_name"),rs.getString("company"),rs.getString("booking_no")};
+					dtm.addRow(t);
+					
+			}
+			
+			
+		}catch(Exception e) {}
+		
+
 	}
 	
 	private void DisplayImage(JPanel jp, String url) {
@@ -1512,7 +1598,7 @@ public class myAccount {
 	private boolean checkPwd() {
 		try {
 			System.out.println(getHash(Arrays.toString(v2oldPass.getPassword())));
-			ResultSet rs = DBConnect.getInstance().runFetchQuery("SELECT * from Login where ForeignerID = '"+f_ID+"' and password = '"+getHash(Arrays.toString(v2oldPass.getPassword()))+"';");
+			ResultSet rs = DBConnect.getInstance().runFetchQuery("SELECT * from Login where foreigner_ID = '"+f_ID+"' and password = '"+getHash(Arrays.toString(v2oldPass.getPassword()))+"';");
 			while(rs.next()) 
 				return true;
 		}catch(Exception e) {}
@@ -1537,8 +1623,19 @@ public class myAccount {
 		//new should not match old (not blank)
 		//confirm should match new
 		
+		//address marital email religion phoneNo
 		
+		
+		//DBConnect.getInstance().runManipulationQuery("UPDATE foreigner set address_buildingNo='"+v2address.getText()+"', address_streetName='"+v2streetName.getText()+"', address_city='"+v2cityName.getText()+"', address_state='"+v2stateName.getText()+"', marital_status='"+(v2married.isSelected()?"married":"unmarried")+"', religionID='"+religions.getKey()+" where foreigner_ID ='"+f_ID+"' ;");
+		System.out.println("Updated!");
 	
+	}
+	
+	private void unboldAll() {
+		JLabel labels[] = new JLabel[] {accountDashboard, myPersonal, editDetails, travelog, applyforVisit};
+		for(JLabel l : labels) {
+			l.setFont(new Font("Sitka Subheading", Font.PLAIN, 17));
+		}
 	}
 	
 	
