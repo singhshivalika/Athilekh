@@ -158,6 +158,26 @@ public class Login {
 		bsubmit.setBackground(new Color(0, 36, 71));
 		loginPan.add(bsubmit);
 		
+		JButton bofficial = new JButton("Go to Official");
+		bofficial.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					officialls frame = new officialls();
+					frame.setBounds(160, 40, 1179, 781);
+					frame.setResizable(false);
+					frame.setVisible(true);
+				} catch (Exception et) {
+					et.printStackTrace();
+				}
+			}
+		});
+		bofficial.setForeground(Color.LIGHT_GRAY);
+		bofficial.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 15));
+		bofficial.setBackground(new Color(0, 36, 71));
+		bofficial.setBounds(43, 170, 167, 42);
+		loginPan.add(bofficial);
+		
 		JPanel panel = new JPanel();
 		panel.setBackground(new Color(231,231,231));
 		panel.setBounds(0, 105, 1175, 645);
