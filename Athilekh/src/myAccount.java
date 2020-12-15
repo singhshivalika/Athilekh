@@ -59,7 +59,7 @@ import javax.swing.JTable;
 
 public class myAccount {
 
-	private JFrame frame;
+	public JFrame frame;
 	private String resize2;
 	private JLabel daysLabel;
 	private JTextField v2gender;
@@ -96,8 +96,8 @@ public class myAccount {
 	private JComboBox v2religions; 
 	
 
-	public static String f_name;
-	public static String f_ID, f_fullName, f_passNo, f_countryName, f_phoneNo, f_gender, f_address, f_dOB, f_marrital,
+	public  static String f_name;
+	public  static String f_ID, f_fullName, f_passNo, f_countryName, f_phoneNo, f_gender, f_address, f_dOB, f_marrital,
 			f_email, f_blood, f_religionName;
 	private static String f_addBuildNo, f_addStreetNo, f_addCity, f_addState, f_pass;
 	private JTextField v2streetName;
@@ -122,12 +122,35 @@ public class myAccount {
 	String[] tblHead = { "Date", "VISA", "Company", "Booking No" };
 	DefaultTableModel dtm = new DefaultTableModel(tblHead, 0);
 
-	public static void main(String[] args) {
 
 		// ID -> PASSWORD
 		// "20201212" -> "ims_project"
 		// "20201101" -> "hii"
 
+		
+
+
+	// THIS IS THE FUNCTION.. TO CHECK WHETHER A DATE IS VALID OR NOT... True->
+	// valid date.... False-> invalid date ... :)
+
+	public boolean validDate(int date, int month, int year) {
+		try {
+			LocalDate.of(year, month, date);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public myAccount(String f_ID) {
+		
+		myAccount.f_ID=f_ID;
+		
+		
+		
 		dates = new String[31];
 		for (int i = 1; i <= 31; i++)
 			dates[i - 1] = String.valueOf(i);
@@ -140,7 +163,6 @@ public class myAccount {
 		for (int i = sY; i <= eY; i++)
 			years[i - sY] = String.valueOf(i);
 
-		f_ID = args[0];
 
 		// Fetching name
 		try {
@@ -247,36 +269,8 @@ public class myAccount {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					myAccount window = new myAccount();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
-	}
-
-	// THIS IS THE FUNCTION.. TO CHECK WHETHER A DATE IS VALID OR NOT... True->
-	// valid date.... False-> invalid date ... :)
-
-	public boolean validDate(int date, int month, int year) {
-		try {
-			LocalDate.of(year, month, date);
-			return true;
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	/**
-	 * Create the application.
-	 */
-	public myAccount() {
+		
+		
 		initialize();
 
 		vTicket.setText(dBoard_Ticket);
@@ -335,6 +329,14 @@ public class myAccount {
 		frame.getContentPane().add(icon_divider);
 
 		JButton logout_button = new JButton("LOGOUT");
+		logout_button.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				frame.dispose();
+				Login l = new Login();
+				l.frame.setVisible(true);
+			}
+		});
 		logout_button.setForeground(new Color(0, 0, 0));
 		logout_button.setFont(new Font("Segoe UI Semibold", Font.PLAIN, 10));
 		logout_button.setBounds(1069, 67, 85, 21);
@@ -1516,7 +1518,7 @@ public class myAccount {
 
 	}
 
-	private String getHash(String s) {
+	public static String getHash(String s) {
 
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-256");
