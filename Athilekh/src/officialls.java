@@ -269,13 +269,14 @@ public class officialls extends JFrame {
 						String query2="SELECT (DATEDIFF(CURRENT_TIMESTAMP,v.dt_tm_arvl)) as post_days,(vi.duration-DATEDIFF(CURRENT_TIMESTAMP,v.dt_tm_arvl)) as remaining_days FROM Visitor v,visa vi WHERE v.foreigner_ID=(SELECT foreigner_ID FROM foreigner WHERE name_firstName='"+str1+"')";
 						ps2=connection.prepareStatement(query2);
 						rs2=ps2.executeQuery();
-					//	String query3="SELECT dt_tm_arvl FROM Visitor vi WHERE vi.Foreigner";
-						//ps3=connection.prepareStatement(query3);
-						//rs3=ps3.executeQuery();
+					
+						String query3="SELECT dt_tm_arvl FROM Visitor vi WHERE vi.Foreigner_ID = (SELECT foreigner_ID FROM foreigner WHERE name_firstName='"+str1+"')";
+						ps3=connection.prepareStatement(query3);
+						rs3=ps3.executeQuery();
 						
 						table.setHeaderRows(1);
 						
-						while(rs1.next() && rs2.next())
+						while(rs1.next() && rs2.next() && rs3.next())
 						{
 							com.itextpdf.text.Font fs=FontFactory.getFont(FontFactory.COURIER_BOLD,6.7f);
 							String id=rs1.getString("foreigner_ID");
@@ -308,7 +309,7 @@ public class officialls extends JFrame {
 							String rday=rs2.getString("remaining_days");     //remaining days
 							PdfPCell s10=new PdfPCell(new Phrase(rday,FontFactory.getFont(FontFactory.COURIER,8f)));
 							table.addCell(s10);
-							String date_arr="HEF";
+							String date_arr=rs3.getString("dt_tm_arvl");;
 							PdfPCell s11=new PdfPCell(new Phrase(date_arr,FontFactory.getFont(FontFactory.COURIER,8f)));
 							table.addCell(date_arr);
 							String email=rs1.getString("email");
@@ -330,15 +331,14 @@ public class officialls extends JFrame {
 						String query2="SELECT (DATEDIFF(CURRENT_TIMESTAMP,v.dt_tm_arvl)) as post_days,(vi.duration-DATEDIFF(CURRENT_TIMESTAMP,v.dt_tm_arvl)) as remaining_days FROM Visitor v,visa vi WHERE dt_tm_arvl='"+str3+"' AND v.visa_ID=vi.visa_ID";
 						ps2=connection.prepareStatement(query2);
 						rs2=ps2.executeQuery();
-					//	String query3="SELECT dt_tm_arvl FROM Visitor vi WHERE vi.Foreigner";
-						//ps3=connection.prepareStatement(query3);
-						//rs3=ps3.executeQuery();
+					
+						
 						
 						table.setHeaderRows(1);
 						
 						while(rs1.next() && rs2.next())
 						{
-							com.itextpdf.text.Font fs=FontFactory.getFont(FontFactory.COURIER_BOLD,6.7f);
+							//com.itextpdf.text.Font fs=FontFactory.getFont(FontFactory.COURIER_BOLD,6.7f);
 							String id=rs1.getString("foreigner_ID");
 							PdfPCell s1=new PdfPCell(new Phrase(id,FontFactory.getFont(FontFactory.COURIER,8.5f)));
 							table.addCell(id);
@@ -369,7 +369,7 @@ public class officialls extends JFrame {
 							String rday=rs2.getString("remaining_days");     //remaining days
 							PdfPCell s10=new PdfPCell(new Phrase(rday,FontFactory.getFont(FontFactory.COURIER,8.5f)));
 							table.addCell(s10);
-							String date_arr="HEF";
+							String date_arr=str3;
 							PdfPCell s11=new PdfPCell(new Phrase(date_arr,FontFactory.getFont(FontFactory.COURIER,8.5f)));
 							table.addCell(date_arr);
 							String email=rs1.getString("email");
