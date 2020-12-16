@@ -883,8 +883,10 @@ public class myAccount {
 
 		JPanel persnlDetailPan = new JPanel();
 		persnlDetailPan.setLayout(null);
-		persnlDetailPan.setBackground(new Color(247, 247, 247));
 		persnlDetailPan.setBounds(30, 160, 820, 322);
+		//persnlDetailPan.setBackground(new Color(247, 247, 247));
+		persnlDetailPan.setBackground(new Color(247, 247, 247));
+		persnlDetailPan.setBorder(border);
 		panel.add(persnlDetailPan);
 
 		JLabel l2Phoneno = new JLabel("Phone No.");
@@ -1118,8 +1120,9 @@ public class myAccount {
 
 		JPanel v2loginpan = new JPanel();
 		v2loginpan.setLayout(null);
-		v2loginpan.setBackground(new Color(247, 247, 247));
 		v2loginpan.setBounds(30, 574, 830, 140);
+		v2loginpan.setBackground(new Color(247, 247, 247));
+		v2loginpan.setBorder(border);
 		panel.add(v2loginpan);
 
 		v2conPass = new JPasswordField();
@@ -1230,11 +1233,22 @@ public class myAccount {
 		trypanel.add(travelPan, "name_497750311800400");
 		travelPan.setLayout(null);
 		travelPan.setBackground(new Color(231, 231, 231));
+		
+		/*
+		
+		
+
+		
+		 
+		 */
 
 		JPanel panel_1 = new JPanel();
 		panel_1.setBounds(53, 100, 783, 452);
 		panel_1.setLayout(null);
 		travelPan.add(panel_1);
+		panel_1.setBackground(new Color(247, 247, 247));
+		panel_1.setBorder(border);
+		
 
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(43, 38, 700, 375);
@@ -1261,8 +1275,9 @@ public class myAccount {
 
 		JPanel DetailPanel = new JPanel();
 		DetailPanel.setLayout(null);
-		DetailPanel.setBackground(new Color(247, 247, 247));
 		DetailPanel.setBounds(29, 213, 817, 245);
+		DetailPanel.setBackground(new Color(247, 247, 247));
+		DetailPanel.setBorder(border);
 		applyPan.add(DetailPanel);
 
 		JLabel l1ID_2_2 = new JLabel("VISA");
