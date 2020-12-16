@@ -182,9 +182,7 @@ public class myAccount {
 
 		// Fetching joined details
 		try {
-			ResultSet rs = DBConnect.getInstance().runFetchQuery(
-					" SELECT * FROM foreigner LEFT JOIN country USING (country_ID) LEFT JOIN passport USING (foreigner_ID) LEFT JOIN email USING (foreigner_ID) LEFT JOIN religion using (religionID) where Foreigner_ID='"
-							+ f_ID + "';");
+			ResultSet rs = DBConnect.getInstance().runFetchQuery(" SELECT * FROM mainView where Foreigner_ID='"+ f_ID + "';");
 
 			while (rs.next()) {
 
@@ -1489,9 +1487,7 @@ public class myAccount {
 
 			dtm.setRowCount(0);
 
-			ResultSet rs = DBConnect.getInstance().runFetchQuery(
-					"SELECT * from visitor left join Arr_transportatn using (visitor_ID) left join visa using(visa_ID) where foreigner_ID = '"
-							+ f_ID + "' order by dt_tm_arvl desc;");
+			ResultSet rs = DBConnect.getInstance().runFetchQuery("SELECT * FROM visitorView where foreigner_ID = '"+ f_ID + "' order by dt_tm_arvl desc;");
 
 			while (rs.next()) {
 
